@@ -1,0 +1,19 @@
+{
+    "name": "luancicareli/ecommerce",
+    "authors": [
+        {
+            "name": "Luan Cicareli",
+            "email": "luancicarelli3@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "5.2.22",
+        "rain/raintpl": "3.0.0",
+        "slim/slim": "2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "vendor\\hcodebr\\php-classes\\src"
+        }
+    }
+}
