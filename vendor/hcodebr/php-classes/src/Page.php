@@ -46,10 +46,10 @@ class Page {
     private function setData($data = array())
     {
 
-        foreach($data as $key => $val)
+        foreach($data as $key => $value)
         {
 
-            $this->tpl->assign($key, $val);
+            $this->tpl->assign($key, $value);
 
         }
 
