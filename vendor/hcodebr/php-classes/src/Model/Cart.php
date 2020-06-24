@@ -63,18 +63,44 @@ class Cart extends Model{
             $this->setData($results[0]);
         }
     }
-    public function save(){
+    public function save()
+    {
 
         $sql = new Sql();
-        $results = $sql->select("CALL sp_carts_save(:idcart, :dessessionid, :iduser, :deszipcode, :vlfreight, :nrdays)",[
-            ':idcart'=>$this->getidcart(),
-            ':dessessionid'=>$this->getdessessionid(),
-            ':iduser'=>$this->getiduser(),
-            ':deszipcode'=>$this->getdeszipcode(),
-            ':vlfreight'=>$this->getvlfreight(),
-            ':nrdays'=>$this->getnrdays(),
+        $results = $sql->select("CALL sp_carts_save(:idcart, :dessessionid, :iduser, :deszipcode, :vlfreight, :nrdays)", [
+            ':idcart' => $this->getidcart(),
+            ':dessessionid' => $this->getdessessionid(),
+            ':iduser' => $this->getiduser(),
+            ':deszipcode' => $this->getdeszipcode(),
+            ':vlfreight' => $this->getvlfreight(),
+            ':nrdays' => $this->getnrdays(),
         ]);
         $this->setData($results[0]);
+    }
+    public function addProduct(Product $product){
+        
+        $sql = new Sql();
+        $sql->query("INSERT INTO tb_cartsproducts (idcart, idproduct) VALUES(:idcart, :idproduct)",[
+            ":idcart"=>$this->getidcart(),
+            ":idproduct"=>$product->getidproduct()
+        ]);
+    }
+    public function removeProduct(Product $product, $all = false){
+
+        $sql = new Sql();
+        if ($all){
+            $sql->query("UPDATE tb_cartsproducts SET dtremoved = NOW() WHERE idcart = :idcart AND idproduct = :idproduct
+            AND dtremoved IS NULL", [
+                ':idcart'=>$this->getidcart(),
+                ':idproduct'=>$product->getidproduct()
+            ]);
+        }else {
+            $sql->query("UPDATE tb_cartsproducts SET dtremoved = NOW() WHERE idcart = :idcart AND idproduct = :idproduct 
+            AND dtremoved IS NULL LIMIT 1", [
+                ':idcart' => $this->getidcart(),
+                ':idproduct' => $product->getidproduct()
+            ]);
+        }
     }
 }
 ?>
