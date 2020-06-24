@@ -12,8 +12,32 @@
                     <a class="caption button-radius" href="#"><span class="icon"></span>Venha conferir!</a>
                 </div>
             </li>
+            <li>
+                <img src="/res/site/img/h5-slide.png" alt="Slide">
+                <div class="caption-group">
+                    <h2 class="caption title2">
+                        Loja <strong>Leopoldina Modas</strong></span>
+                    </h2>
+                    <h4 class="caption subtitle2">Promoção 30% OFF</h4>
+                    <a class="caption button-radius" href="#"><span class="icon"></span>Venha conferir!</a>
+                </div>
+            </li>
         </ul>
     </div>
+    <!--<div class="block-slider block-slider4">
+    <ul class="" id="bxslider-home5">
+        <li>
+            <img src="/res/site/img/h5-slide.png" alt="Slide">
+            <div class="caption-group">
+                <h2 class="caption title">
+                    Loja <strong>Leopoldina Modas</strong></span>
+                </h2>
+                <h4 class="caption subtitle">Promoção 30% OFF</h4>
+                <a class="caption button-radius" href="#"><span class="icon"></span>Venha conferir!</a>
+            </div>
+        </li>
+    </ul>
+</div>-->
     <!-- ./Slider -->
 </div> <!-- End slider area -->
 
