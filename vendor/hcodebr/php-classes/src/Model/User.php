@@ -14,6 +14,7 @@ class User extends Model{
     const cipher = "AES-128-ECB";
     const ERROR = "UserError";
     const ERROR_REGISTER = "UserErrorRegister";
+    const SUCCESS = "UserSucess";
 
     public static function getFromSession()
     {
