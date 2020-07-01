@@ -13,17 +13,17 @@ class User extends Model{
     const SECRET = "L30p0ld1n@S3cr3t";
     const cipher = "AES-128-ECB";
 
-    public static function getFromSession(){
+    public static function getFromSession()
+    {
 
         $user = new User();
-
-        if (isset($_SESSION[User::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0){
-
+        if (isset($_SESSION[User::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0) {
             $user->setData($_SESSION[User::SESSION]);
         }
         return $user;
     }
-    public static function checkLogin($inadmin = true){
+    public static function checkLogin($inadmin = true)
+    {
 
         if (
             !isset($_SESSION[User::SESSION])
@@ -31,17 +31,17 @@ class User extends Model{
             !$_SESSION[User::SESSION]
             ||
             !(int)$_SESSION[User::SESSION]["iduser"] > 0
-        ){
-            //não está logado
+        ) {
+            //Não está logado
             return false;
-        }else{
-
-            if ($inadmin === true && (bool)$_SESSION[User::SESSION]["inadmin"] === true){
+        } else {
+            if ($inadmin === true && (bool)$_SESSION[User::SESSION]['inadmin'] === true) {
                 return true;
-            }else if ($inadmin === false){
+            } else if ($inadmin === false) {
                 return true;
-            }else{
+            } else {
                 return false;
+
             }
         }
     }
@@ -71,14 +71,17 @@ class User extends Model{
             throw new \Exception("Usuario inexistente ou Senha invalida.");
         }
     }
-    public static function verifyLogin($inadmin = true){
+    public static function verifyLogin($inadmin = true)
+    {
+        if (!User::checkLogin($inadmin)) {
 
-        if (User::checkLogin($inadmin)){
-
-            header("location: /admin/login");
+            if ($inadmin) {
+                header("Location: /admin/login");
+            } else {
+                header("Location: /login");
+            }
             exit;
         }
-
     }
     public static function logout()
     {
