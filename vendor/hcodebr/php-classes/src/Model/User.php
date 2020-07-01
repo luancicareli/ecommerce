@@ -146,7 +146,7 @@ class User extends Model{
             ":iduser"=>$this->getiduser()
         ));
     }
-        public static function getForgot($email){
+        public static function getForgot($email, $inadmin = true){
 
         $sql = new Sql();
         $results = $sql->select(
@@ -170,7 +170,11 @@ class User extends Model{
             }else{
                 $dataRecovery = $resultsRecovery[0];
                 $code = base64_encode(openssl_encrypt($dataRecovery['idrecovery'],User::cipher, User::SECRET));
-                $link = "http://local.webstore.com/admin/forgot/reset?code=$code";
+                if ($inadmin===true){
+                    $link = "http://local.webstore.com/admin/forgot/reset?code=$code";
+                }else{
+                    $link = "http://local.webstore.com/forgot/reset?code=$code";
+                }
                 $mailer = new Mailer($data['desemail'], $data['desperson'], "Redefinir senha Leopoldina Modas", "forgot", array(
                      "name"=>$data['desperson'],
                      "link"=>$link
