@@ -4,6 +4,8 @@ Use \Hcode\Page;
 Use \Hcode\Model\Product;
 Use \Hcode\Model\Category;
 Use \Hcode\Model\Cart;
+Use \Hcode\Model\Address;
+Use \Hcode\Model\User;
 
 $app->get('/', function() {
 
@@ -67,7 +69,6 @@ $app->get("/cart/:idproduct/add", function($idproduct){
     }
     header("Location: /cart");
     exit;
-
 });
 $app->get("/cart/:idproduct/minus", function($idproduct){
 
@@ -77,7 +78,6 @@ $app->get("/cart/:idproduct/minus", function($idproduct){
     $cart->removeProduct($product);
     header("Location: /cart");
     exit;
-
 });
 $app->get("/cart/:idproduct/remove", function($idproduct){
 
@@ -87,16 +87,208 @@ $app->get("/cart/:idproduct/remove", function($idproduct){
     $cart->removeProduct($product, true);
     header("Location: /cart");
     exit;
-
 });
 $app->post("/cart/freight", function(){
 
     $cart = Cart::getFromSession();
-
     $cart->setFreight($_POST['zipcode']);
-
     header("Location: /cart");
     exit;
-
 });
+$app->get("/checkout", function(){
+
+    User::verifyLogin(false);
+    $address = new Address();
+    $cart = Cart::getFromSession();
+    if (!isset($_GET['zipcode'])) {
+        $_GET['zipcode'] = $cart->getdeszipcode();
+    }
+    if (isset($_GET['zipcode'])) {
+        $address->loadFromCEP($_GET['zipcode']);
+        $cart->setdeszipcode($_GET['zipcode']);
+        $cart->save();
+        $cart->getCalculateTotal();
+    }
+    if (!$address->getdesaddress()) $address->setdesaddress('');
+    if (!$address->getdesnumber()) $address->setdesnumber('');
+    if (!$address->getdescomplement()) $address->setdescomplement('');
+    if (!$address->getdesdistrict()) $address->setdesdistrict('');
+    if (!$address->getdescity()) $address->setdescity('');
+    if (!$address->getdesstate()) $address->setdesstate('');
+    if (!$address->getdescountry()) $address->setdescountry('');
+    if (!$address->getdeszipcode()) $address->setdeszipcode('');
+    $page = new Page();
+    $page->setTpl("checkout", [
+        'cart'=>$cart->getValues(),
+        'address'=>$address->getValues(),
+        'products'=>$cart->getProducts(),
+        'error'=>Address::getMsgError()
+    ]);
+});
+$app->post("/checkout", function(){
+
+    User::verifyLogin(false);
+    if (!isset($_POST['zipcode']) || $_POST['zipcode'] === '') {
+        Address::setMsgError("Informe o CEP.");
+        header('Location: /checkout');
+        exit;
+    }
+    if (!isset($_POST['desaddress']) || $_POST['desaddress'] === '') {
+        Address::setMsgError("Informe o endereço.");
+        header('Location: /checkout');
+        exit;
+    }
+    if (!isset($_POST['desdistrict']) || $_POST['desdistrict'] === '') {
+        Address::setMsgError("Informe o bairro.");
+        header('Location: /checkout');
+        exit;
+    }
+    if (!isset($_POST['descity']) || $_POST['descity'] === '') {
+        Address::setMsgError("Informe a cidade.");
+        header('Location: /checkout');
+        exit;
+    }
+    if (!isset($_POST['desstate']) || $_POST['desstate'] === '') {
+        Address::setMsgError("Informe o estado.");
+        header('Location: /checkout');
+        exit;
+    }
+    if (!isset($_POST['descountry']) || $_POST['descountry'] === '') {
+        Address::setMsgError("Informe o país.");
+        header('Location: /checkout');
+        exit;
+    }
+    $user = User::getFromSession();
+    $address = new Address();
+    $_POST['deszipcode'] = $_POST['zipcode'];
+    $_POST['idperson'] = $user->getidperson();
+    $address->setData($_POST);
+    $address->save();
+    $cart = Cart::getFromSession();
+    $cart->getCalculateTotal();
+    $order = new Order();
+    $order->setData([
+        'idcart'=>$cart->getidcart(),
+        'idaddress'=>$address->getidaddress(),
+        'iduser'=>$user->getiduser(),
+        'idstatus'=>OrderStatus::EM_ABERTO,
+        'vltotal'=>$cart->getvltotal()
+    ]);
+
+    $order->save();
+    switch ((int)$_POST['payment-method']) {
+
+        case 1:
+            header("Location: /order/".$order->getidorder()."/pagseguro");
+            break;
+        case 2:
+            header("Location: /order/".$order->getidorder()."/paypal");
+            break;
+    }
+    exit;
+});
+$app->get("/order/:idorder/pagseguro", function($idorder){
+
+    User::verifyLogin(false);
+    $order = new Order();
+    $order->get((int)$idorder);
+    $cart = $order->getCart();
+    $page = new Page([
+        'header'=>false,
+        'footer'=>false
+    ]);
+    $page->setTpl("payment-pagseguro", [
+        'order'=>$order->getValues(),
+        'cart'=>$cart->getValues(),
+        'products'=>$cart->getProducts(),
+        'phone'=>[
+            'areaCode'=>substr($order->getnrphone(), 0, 2),
+            'number'=>substr($order->getnrphone(), 2, strlen($order->getnrphone()))
+        ]
+    ]);
+});
+$app->get("/order/:idorder/paypal", function($idorder){
+
+    User::verifyLogin(false);
+    $order = new Order();
+    $order->get((int)$idorder);
+    $cart = $order->getCart();
+    $page = new Page([
+        'header'=>false,
+        'footer'=>false
+    ]);
+    $page->setTpl("payment-paypal", [
+        'order'=>$order->getValues(),
+        'cart'=>$cart->getValues(),
+        'products'=>$cart->getProducts()
+    ]);
+});
+$app->get("/login", function(){
+
+    $page = new Page();
+    $page->setTpl("login", [
+        'error'=>User::getError(),
+        'errorRegister'=>User::getErrorRegister(),
+        'registerValues'=>(isset($_SESSION['registerValues'])) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>'']
+    ]);
+});
+$app->post("/login", function(){
+
+    try {
+        User::login($_POST['login'], $_POST['password']);
+    } catch(Exception $e) {
+        User::setError($e->getMessage());
+    }
+    header("Location: /checkout");
+    exit;
+});
+$app->get("/logout", function(){
+
+    User::logout();
+    header("Location: /login");
+    exit;
+});
+$app->post("/register", function(){
+
+    $_SESSION['registerValues'] = $_POST;
+    if (!isset($_POST['name']) || $_POST['name'] == '') {
+        User::setErrorRegister("Preencha o seu nome.");
+        header("Location: /login");
+        exit;
+    }
+    if (!isset($_POST['email']) || $_POST['email'] == '') {
+        User::setErrorRegister("Preencha o seu e-mail.");
+        header("Location: /login");
+        exit;
+    }
+    if (!isset($_POST['phone']) || $_POST['phone'] == '') {
+        User::setErrorRegister("Preencha o seu Telefone.");
+        header("Location: /login");
+        exit;
+    }
+    if (!isset($_POST['password']) || $_POST['password'] == '') {
+        User::setErrorRegister("Preencha a senha.");
+        header("Location: /login");
+        exit;
+    }
+    if (User::checkLoginExist($_POST['email']) === true) {
+        User::setErrorRegister("Este endereço de e-mail já está sendo usado por outro usuário.");
+        header("Location: /login");
+        exit;
+    }
+    $user = new User();
+    $user->setData([
+        'inadmin'=>0,
+        'deslogin'=>$_POST['email'],
+        'desperson'=>$_POST['name'],
+        'desemail'=>$_POST['email'],
+        'despassword'=>$_POST['password'],
+        'nrphone'=>$_POST['phone']
+    ]);
+    $user->save();
+    User::login($_POST['email'], $_POST['password']);
+    header('Location: /checkout');
+    exit;
+});
+
 ?>
