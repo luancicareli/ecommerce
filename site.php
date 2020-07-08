@@ -122,7 +122,7 @@ $app->get("/checkout", function(){
         'cart'=>$cart->getValues(),
         'address'=>$address->getValues(),
         'products'=>$cart->getProducts(),
-        //'error'=>Address::getMsgError()
+        'error'=>Address::getMsgError()
     ]);
 });
 $app->post("/checkout", function(){
@@ -165,8 +165,8 @@ $app->post("/checkout", function(){
     $address->setData($_POST);
     $address->save();
     $cart = Cart::getFromSession();
-    $cart->getCalculateTotal();
-    $order = new Order();
+    $cart->getCalculateTotal(); });
+    /*$order = new Order();
     $order->setData([
         'idcart'=>$cart->getidcart(),
         'idaddress'=>$address->getidaddress(),
@@ -222,7 +222,7 @@ $app->get("/order/:idorder/paypal", function($idorder){
         'cart'=>$cart->getValues(),
         'products'=>$cart->getProducts()
     ]);
-});
+});*/
 $app->get("/login", function(){
 
     $page = new Page();
