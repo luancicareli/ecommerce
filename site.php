@@ -594,6 +594,13 @@ $app->post("/profile/change-password", function(){
 		exit;
 
 	}
+	if ($_POST['new_pass'] !== $_POST['new_pass_confirm']) {
+
+		User::setError("A nova senha é diferente da confirmação");
+		header("Location: /profile/change-password");
+		exit;
+
+	}
 
 	if ($_POST['current_pass'] === $_POST['new_pass']) {
 
