@@ -4,13 +4,19 @@
         <div class="row">
             <div class="col-md-3 col-sm-6">
                 <div class="footer-about-us">
-                    <h2>Hcode Store</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis sunt id doloribus vero quam laborum quas alias dolores blanditiis iusto consequatur, modi aliquid eveniet eligendi iure eaque ipsam iste, pariatur omnis sint! Suscipit, debitis, quisquam. Laborum commodi veritatis magni at?</p>
-                    <div class="footer-social">
-                        <a href="https://www.facebook.com/hcodebr" target="_blank"><i class="fa fa-facebook"></i></a>
-                        <a href="https://twitter.com/hcodebr" target="_blank"><i class="fa fa-twitter"></i></a>
-                        <a href="https://www.youtube.com/channel/UCjWENuSH2gX55-y7QSZiWxA" target="_blank"><i class="fa fa-youtube"></i></a>
-                    </div>
+                    <h2>Leopoldina Modas</h2>
+                    <p>A Loja Leopoldina Modas reúne as peças mais desejadas do momento com um estilo básico, eclético e moderno. 
+                        Sempre priorizando vestir-se bem e com conforto, para atender as necessidades das(os) nossos clientes, 
+                        que precisam de mais de 24 horas para realizar todas as atividades do dia. Com sede no Fernandópolis/SP, 
+                        a Loja está consolidada no mercado virtual desde de Agosto, de 2020 e hoje é referência no mercado 
+                        online. Nosso maior compromisso é garantir a satisfação de todos nossos clientes! Desde o primeiro clique, 
+                        zelamos pela segurança e seriedade da nossa loja virtual, cada cliente recebe um atendimento diferenciado 
+                        e exclusivo.</p>
+                        <div class="footer-social">
+                            <a href="https://www.facebook.com/leopoldinamodasilimitada" target="_blank"><i class="fa fa-facebook"></i></a>
+                            <a href="#" target="_blank"><i class="fa fa-twitter"></i></a>
+                            <a href="#" target="_blank"><i class="fa fa-youtube"></i></a>
+                        </div>
                 </div>
             </div>
 
@@ -55,7 +61,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="copyright">
-                    <p>&copy; 2017 Hcode Treinamentos. <a href="http://www.hcode.com.br" target="_blank">hcode.com.br</a></p>
+                    <p>&copy; 2020 Leopoldina Modas Me. <a href="#" target="_blank">Leopoldinamodas.com.br</a></p>
                 </div>
             </div>
 
